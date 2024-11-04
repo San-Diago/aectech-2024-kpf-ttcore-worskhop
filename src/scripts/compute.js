@@ -83,7 +83,9 @@ function createDoc(res) {
         // Geometry
         if (dataType.includes("Geometry")) {
           data = JSON.parse(d.data);
+          // console.log("GH Geometry data:",data);
           const rhinoObject = rhino.CommonObject.decode(data);
+          // console.log("GH Geometry data decoded:",rhinoObject);
           doc.objects().add(rhinoObject, null);
         } else {
           // Other ouputs
@@ -101,20 +103,26 @@ function createDoc(res) {
 
   // go through the objects in the Rhino document
   let objects = doc.objects();
-  for (let i = 0; i < objects.count; i++) {
-    const rhinoObject = objects.get(i);
-    // asign geometry userstrings to object attributes
-    if (rhinoObject.geometry().userStringCount > 0) {
-      const g_userStrings = rhinoObject.geometry().getUserStrings();
+  // console.log("Rhino document objects:",objects);
+  
+    for (let i = 0; i < objects.count; i++) {
+      const rhinoObject = objects.get(i);
+      if (rhinoObject.geometry().userStringCount > 0) {
+          const g_userStrings = rhinoObject.geometry().getUserStrings();
 
-      //iterate through userData and store all userdata to geometry
-      for (let j = 0; j < g_userStrings.length; j++) {
-        rhinoObject
-          .attributes()
-          .setUserString(g_userStrings[j][0], g_userStrings[j][1]);
+          // Store vertex colors if they exist
+          if (rhinoObject.geometry().hasVertexColors) {
+              g_userStrings.push(["vertexColors", rhinoObject.geometry().getVertexColors()]);
+          }
+
+          // Iterate through userData and store all userData to geometry
+          for (let j = 0; j < g_userStrings.length; j++) {
+              rhinoObject.attributes().setUserString(g_userStrings[j][0], g_userStrings[j][1]);
+          }
       }
-    }
   }
+
+
   return doc;
 }
 

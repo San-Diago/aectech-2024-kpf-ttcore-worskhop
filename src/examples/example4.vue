@@ -11,9 +11,11 @@
 
 <script setup>
 import { ref, onBeforeMount, computed } from "vue"
-import GeometryView from "../components/MinimalisticGeometryView.vue"
+import GeometryView from "../components/MinimalisticGeometryView-MeshColors.vue"
 import Slider from '../components/Slider.vue'
 import Toggle from "../components/Toggle.vue"
+import MetadataTextBox from "@/components/MetadataTextBox.vue"
+
 
 //define path to grasshopper script
 import def from "../assets/100hpdflat.gh"
@@ -23,7 +25,7 @@ const path = def
 const curvepointName = ref("curvePoint")
 const curvepointValue = ref(1)
 
-
+let metadata = ref([])
 
 //define inputs
 let inputs = ref({
@@ -38,6 +40,11 @@ function updateValue(newValue, parameterName) {
         console.log(parameterName + ':' + newValue)
     }
   }
+}
+
+function receiveMetadata(newValue) {
+  console.log("Metadata",newValue)
+  metadata.value = newValue
 }
 
 </script>
